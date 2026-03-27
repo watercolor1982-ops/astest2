@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASシミュレーター V2 Pro | Stylish Dark</title>
+    <style>
+        :root {
+            --bg-deep: #1a1a1a;
+            --bg-card: #000000;
+            --accent-gold: #d4af37;
+            --accent-blue: #00d4ff;
+            --text-main: #ffffff;
+            --text-sub: #aaaaaa;
+            --success: #27ae60;
+            --danger: #c0392b;
+        }
+        body { 
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
+            background-color: var(--bg-deep); color: var(--text-main); 
+            padding: 20px; line-height: 1.5; font-size: 14px; margin: 0;
+        }
+        .card { 
+            max-width: 850px; margin: auto; background-color: var(--bg-card); 
+            padding: 30px; border-radius: 15px; 
+            border: 1px solid var(--accent-gold);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
+        }
+        h1 { 
+            text-align: center; color: var(--accent-gold); 
+            font-size: 1.6em; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;
+        }
+        .info-banner {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--accent-gold);
+            padding: 12px; border-radius: 4px; margin-bottom: 25px; font-size: 0.85em; color: #ccc;
+        }
+        .setup-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 15px; margin-bottom: 25px; background: #111; padding: 20px; border-radius: 10px; border: 1px solid #222;
+        }
+        .group { display: flex; flex-direction: column; }
+        label { font-weight: bold; font-size: 0.8em; margin-bottom: 6px; color: var(--accent-gold); }
+        input, select { 
+            background: #222; border: 1px solid #444; border-radius: 6px; 
+            color: #fff; padding: 10px; font-size: 1em; outline: none; 
+        }
+        input:focus { border-color: var(--accent-gold); }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { background: #222; color: var(--accent-gold); font-size: 0.85em; padding: 12px 5px; border-bottom: 2px solid #333; }
+        td { padding: 12px 5px; text-align: center; border-bottom: 1px solid #1a1a1a; }
+        .day-label { font-weight: bold; color: var(--accent-gold); background: #0a0a0a; width: 60px; }
+        td input { 
+            width: 70%; background: #111; border: 1px solid #333; 
+            color: #fff; padding: 6px; border-radius: 4px; text-align: center; 
+        }
+
+        .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .box { padding: 18px; border-radius: 10px; text-align: center; background: #0a0a0a; border: 1px solid #333; }
+        .profit { 
+            background: linear-gradient(145deg, #1e5631, #0a2012); 
+            grid-column: span 3; border: 1px solid var(--success); margin-bottom: 10px;
+        }
+        .xm { border-top: 3px solid var(--accent-blue); }
+        .rakuten { border-top: 3px solid var(--danger); }
+        .val { font-size: 1.5em; font-weight: bold; display: block; margin-top: 8px; }
+        .label { font-size: 0.75em; color: #888; font-weight: bold; }
+        
+        #peakLot { color: var(--accent-gold); }
+        .s-res { color: var(--accent-blue); font-weight: bold; }
+        .footer-note { font-size: 0.75em; color: #666; text-align: center; margin-top: 25px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>ASシミュレーター V2 Pro</h1>
+
+    <div class="info-banner">
+        ※1日最大5ポジション、1回最大0.12Lot、最大保有7日間の公式ルールに準拠。
+    </div>
+
+    <div class="setup-grid">
+        <div class="group">
+            <label>変動幅バッファ (円)</label>
+            <input type="number" id="vol" value="1.0" min="0" step="0.5" oninput="calc()">
+        </div>
+        <div class="group">
+            <label>0.1Lotスワップ (円)</label>
+            <input type="number" id="swap" value="100" oninput="calc()">
+        </div>
+        <div class="group">
+            <label>USD/JPYレート</label>
+            <input type="number" id="rate" value="160.0" step="0.1" oninput="calc()">
+        </div>
+        <div class="group">
+            <label>3倍デー設定</label>
+            <select id="tripleDay" onchange="calc()">
+                <option value="1">月曜日</option>
+                <option value="2">火曜日</option>
+                <option value="3" selected>水曜日</option>
+                <option value="4">木曜日</option>
+                <option value="5">金曜日</option>
+            </select>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>曜日</th>
+                <th>回数 (最大5)</th>
+                <th>Lot (最大0.12)</th>
+                <th>保有日数 (最大7)</th>
+                <th>獲得スワップ</th>
+            </tr>
+        </thead>
+        <tbody id="daysTable">
+            <tr data-day="1"><td class="day-label">月</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+            <tr data-day="2"><td class="day-label">火</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+            <tr data-day="3"><td class="day-label">水</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+            <tr data-day="4"><td class="day-label">木</td><td><input type="number" class="p" value="0" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+            <tr data-day="5"><td class="day-label">金</td><td><input type="number" class="p" value="0" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+        </tbody>
+    </table>
+
+    <div class="res-grid">
+        <div class="box profit">
+            <span class="label" style="color:rgba(255,255,255,0.8);">期待できる一ヶ月あたりの利益額</span>
+            <span class="val" id="resProfit">0 円</span>
+        </div>
+        <div class="box" style="grid-column: span 3; border-style: dashed; border-color: #444;">
+            <span class="label">最大保有ロット (ピーク時)</span>
+            <span class="val" id="peakLot">0.00 Lot</span>
+        </div>
+        <div class="box xm">
+            <span class="label">海外 (1000倍) 必要資金</span>
+            <span class="val" id="resXM">0 円</span>
+        </div>
+        <div class="box rakuten">
+            <span class="label">国内 (25倍) 必要資金</span>
+            <span class="val" id="resRakuten">0 円</span>
+        </div>
+        <div class="box">
+            <span class="label">内バッファ (安全資金)</span>
+            <span class="val" id="resBuffer" style="color:#888;">0 円</span>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        ※土日は保有日数にカウントしません。3倍デーを跨ぐと自動で+2日加算されます。<br>
+        ※最大露出計算は、翌週のポジション重複分を含めた「瞬間最大ロット」を採用しています。
+    </div>
+</div>
+
+<script>
+    async function fetchRate() {
+        try {
+            const res = await fetch('https://api.frankfurter.dev/v1/latest?base=USD&symbols=JPY');
+            const data = await res.json();
+            document.getElementById('rate').value = data.rates.JPY.toFixed(2);
+            calc();
+        } catch (e) { calc(); }
+    }
+
+    function calc() {
+        const vol = parseFloat(document.getElementById('vol').value) || 0;
+        const swap01 = parseFloat(document.getElementById('swap').value) || 0;
+        const rate = parseFloat(document.getElementById('rate').value) || 0;
+        const tripleDay = parseInt(document.getElementById('tripleDay').value);
+
+        const rows = document.querySelectorAll('#daysTable tr');
+        let weeklyProfit = 0;
+        let timeline = new Array(21).fill(0); 
+
+        rows.forEach((row, index) => {
+            const entryDay = index + 1;
+            const p = Math.min(5, parseFloat(row.querySelector('.p').value) || 0);
+            const l = Math.min(0.12, parseFloat(row.querySelector('.l').value) || 0);
+            const h = Math.min(7, parseInt(row.querySelector('.h').value) || 0);
+
+            let actualSwapDays = 0;
+            if (h > 0) {
+                let currentDay = entryDay;
+                for (let i = 0; i < h; i++) {
+                    actualSwapDays += 1;
+                    if (currentDay === tripleDay) actualSwapDays += 2;
+                    currentDay++; if (currentDay > 5) currentDay = 1;
+                }
+            }
+            
+            // 回数（p）が0の場合は獲得スワップ表示を0にする
+            row.querySelector('.s-res').innerText = (p > 0) ? actualSwapDays : 0;
+            
+            weeklyProfit += p * (l / 0.1) * swap01 * actualSwapDays;
+
+            for(let week=0; week<2; week++) {
+                let start = (week * 7) + (entryDay - 1);
+                let dayCounter = 0; let t = entryDay; let offset = 0;
+                while(dayCounter < h) {
+                    timeline[start + offset] += (p * l);
+                    if (t <= 5) dayCounter++;
+                    t++; if(t > 7) t = 1;
+                    offset++;
+                }
+            }
+        });
+
+        const peakLot = Math.max(...timeline);
+        const units = peakLot * 100000;
+        const buffer = units * vol;
+
+        document.getElementById('resProfit').innerText = Math.floor(weeklyProfit * 4).toLocaleString() + " 円";
+        document.getElementById('peakLot').innerText = peakLot.toFixed(2) + " Lot";
+        document.getElementById('resXM').innerText = Math.round((units * rate / 1000) + buffer).toLocaleString() + " 円";
+        document.getElementById('resRakuten').innerText = Math.round((units * rate / 25) + buffer).toLocaleString() + " 円";
+        document.getElementById('resBuffer').innerText = Math.round(buffer).toLocaleString() + " 円";
+    }
+
+    document.addEventListener('input', (e) => { if(e.target.tagName === 'INPUT') calc(); });
+    fetchRate();
+</script>
+</body>
+</html>
