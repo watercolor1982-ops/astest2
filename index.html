@@ -6,7 +6,7 @@
     <title>ASシミュレーター V2 Pro</title>
     <style>
         :root {
-            --bg-deep: #1a1a1a;
+            --bg-deep: #0a0a0a;
             --bg-card: #000000;
             --accent-gold: #d4af37;
             --accent-blue: #00d4ff;
@@ -14,6 +14,7 @@
             --text-sub: #aaaaaa;
             --success: #27ae60;
             --danger: #c0392b;
+            --input-bg: #1a1a1a;
         }
         * { box-sizing: border-box; }
         body { 
@@ -22,72 +23,95 @@
         }
         .card { 
             max-width: 850px; margin: auto; background-color: var(--bg-card); 
-            padding: 25px; border-radius: 15px; border: 1px solid var(--accent-gold);
+            padding: 20px; border-radius: 12px; border: 1px solid #222;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
         }
         h1 { 
             text-align: center; color: var(--accent-gold); 
-            font-size: 1.6em; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;
+            font-size: 1.6em; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px;
+        }
+
+        .info-banner {
+            background: rgba(212, 175, 55, 0.05); border-left: 3px solid var(--accent-gold);
+            padding: 10px; border-radius: 4px; margin-bottom: 25px; font-size: 0.8em; color: #888;
         }
 
         /* 設定エリア */
         .setup-grid { 
             display: grid; grid-template-columns: repeat(2, 1fr); 
-            gap: 15px; margin-bottom: 25px; background: #111; padding: 15px; border-radius: 10px;
+            gap: 12px; margin-bottom: 25px; background: #111; padding: 15px; border-radius: 10px;
         }
         @media (min-width: 600px) { .setup-grid { grid-template-columns: repeat(4, 1fr); } }
         
         .group { display: flex; flex-direction: column; align-items: center; }
-        label { font-size: 0.75em; font-weight: bold; color: var(--accent-gold); margin-bottom: 5px; }
+        label { font-size: 0.75em; font-weight: bold; color: var(--accent-gold); margin-bottom: 6px; }
+
         input, select { 
-            background: #222; border: 1px solid #444; border-radius: 5px; 
-            color: #fff; padding: 8px; font-size: 1em; outline: none; text-align: center;
+            background: var(--input-bg); border: 1px solid #333; border-radius: 4px; 
+            color: #fff; padding: 8px; font-size: 1em; outline: none; text-align: center; width: 100%;
         }
 
         /* テーブル */
-        .table-wrapper { width: 100%; overflow-x: auto; margin-bottom: 25px; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; min-width: 550px; }
-        th { background: #222; color: var(--accent-gold); font-size: 0.8em; padding: 12px 5px; border-bottom: 2px solid #333; }
-        td { padding: 10px 5px; border-bottom: 1px solid #1a1a1a; text-align: center; }
-        .day-label { font-weight: bold; color: var(--accent-gold); width: 50px; }
+        .table-wrapper { width: 100%; margin-bottom: 25px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #111; color: var(--accent-gold); font-size: 0.8em; padding: 10px 2px; border-bottom: 1px solid #222; }
+        td { padding: 10px 2px; border-bottom: 1px solid #111; text-align: center; vertical-align: middle; }
+        .day-label { font-weight: bold; color: var(--accent-gold); font-size: 1.1em; }
 
-        /* スマホ専用ボタン設定 */
-        .num-wrapper { display: inline-flex; align-items: center; gap: 4px; }
-        .m-btn {
-            display: none; /* PCでは隠す */
-            background: #222; border: 1px solid #555; color: var(--accent-gold);
-            width: 30px; height: 30px; border-radius: 4px; font-size: 10px;
-            align-items: center; justify-content: center; cursor: pointer;
-        }
+        /* ▲▼ボタン付き入力欄（常時表示・縦積み） */
+        .num-wrapper { display: inline-flex; align-items: center; gap: 4px; background: var(--input-bg); border: 1px solid #333; border-radius: 4px; padding-right: 2px; }
+        .num-wrapper input { border: none; background: transparent; width: 50px; padding: 6px 2px; font-size: 1em; }
         
+        .btn-stack { display: flex; flex-direction: column; gap: 1px; }
+        .m-btn {
+            background: #2a2a2a; border: none; color: var(--accent-gold);
+            width: 24px; height: 16px; border-radius: 2px; font-size: 8px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+        }
+        .m-btn:active { background: #444; }
+
+        /* スマホ用（画面幅600px以下）の微調整 */
         @media (max-width: 600px) {
-            .m-btn { display: flex; } /* スマホの時だけ出す */
-            td input { width: 50px !important; }
+            .card { padding: 15px 10px; border: 1px solid var(--accent-gold); }
+            th { font-size: 0.65em; }
+            .day-label { font-size: 1em; width: 30px; }
+            .num-wrapper input { width: 35px; font-size: 0.9em; }
+            .m-btn { width: 20px; height: 14px; }
+            .s-res-wrap { font-size: 0.8em; white-space: nowrap; }
             h1 { font-size: 1.3em; }
         }
 
-        td input { width: 80px; background: #111; border: 1px solid #333; color: #fff; padding: 6px; border-radius: 4px; text-align: center; }
-
-        /* 結果エリア */
-        .res-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-        @media (min-width: 600px) { .res-grid { grid-template-columns: repeat(3, 1fr); } }
+        /* 結果表示エリア */
+        .res-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media (min-width: 600px) { .res-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
         
-        .box { padding: 18px; border-radius: 10px; text-align: center; background: #0a0a0a; border: 1px solid #333; }
-        .profit { background: linear-gradient(145deg, #1e5631, #0a2012); border: 1px solid var(--success); }
+        .box { padding: 15px; border-radius: 10px; text-align: center; background: #0a0a0a; border: 1px solid #222; }
+        .profit { 
+            background: linear-gradient(145deg, #1e5631, #0a2012); 
+            border: 1px solid var(--success); margin-bottom: 5px;
+        }
         @media (min-width: 600px) { .profit { grid-column: span 3; } }
         
         .val { font-size: 1.5em; font-weight: bold; display: block; margin-top: 5px; }
-        .label { font-size: 0.75em; color: #888; font-weight: bold; }
+        .label { font-size: 0.7em; color: #888; font-weight: bold; }
         
         #peakLot { color: var(--accent-gold); }
         .s-res { color: var(--accent-blue); font-weight: bold; }
-        .footer-note { font-size: 0.7em; color: #666; text-align: center; margin-top: 20px; line-height: 1.5; }
+        .footer-note { font-size: 0.7em; color: #444; text-align: center; margin-top: 20px; line-height: 1.5; }
+        
+        /* スピンボタン消去 */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h1>ASシミュレーター V2 Pro</h1>
+
+    <div class="info-banner">
+        ※1日最大5ポジション、1回最大0.12Lot、最大保有7日間の公式ルールに準拠。
+    </div>
 
     <div class="setup-grid">
         <div class="group"><label>変動バッファ(円)</label><input type="number" id="vol" value="1.0" step="0.5" oninput="calc()"></div>
@@ -103,31 +127,68 @@
 
     <div class="table-wrapper">
         <table id="asTable">
-            <thead><tr><th>曜日</th><th>回数(最大5)</th><th>Lot(最大0.12)</th><th>保有(最大7)</th><th>獲得スワップ</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>曜日</th>
+                    <th>回数(最大5)</th>
+                    <th>Lot(最大0.12)</th>
+                    <th>保有(最大7)</th>
+                    <th>獲得スワップ</th>
+                </tr>
+            </thead>
             <tbody>
-                <tr data-day="1"><td class="day-label">月</td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="p" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-0.01)">▼</button><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><button class="m-btn" onclick="adj(this,0.01)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="h" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><span class="s-res">-</span>日分</td></tr>
-                <tr data-day="2"><td class="day-label">火</td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="p" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-0.01)">▼</button><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><button class="m-btn" onclick="adj(this,0.01)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="h" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><span class="s-res">-</span>日分</td></tr>
-                <tr data-day="3"><td class="day-label">水</td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="p" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-0.01)">▼</button><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><button class="m-btn" onclick="adj(this,0.01)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="h" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><span class="s-res">-</span>日分</td></tr>
-                <tr data-day="4"><td class="day-label">木</td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="p" value="0" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-0.01)">▼</button><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><button class="m-btn" onclick="adj(this,0.01)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="h" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><span class="s-res">-</span>日分</td></tr>
-                <tr data-day="5"><td class="day-label">金</td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="p" value="0" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-0.01)">▼</button><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><button class="m-btn" onclick="adj(this,0.01)">▲</button></div></td><td><div class="num-wrapper"><button class="m-btn" onclick="adj(this,-1)">▼</button><input type="number" class="h" value="5" oninput="calc()"><button class="m-btn" onclick="adj(this,1)">▲</button></div></td><td><span class="s-res">-</span>日分</td></tr>
+                <tr data-day="1">
+                    <td class="day-label">月</td>
+                    <td><div class="num-wrapper"><input type="number" class="p" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
+                </tr>
+                <tr data-day="2">
+                    <td class="day-label">火</td>
+                    <td><div class="num-wrapper"><input type="number" class="p" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
+                </tr>
+                <tr data-day="3">
+                    <td class="day-label">水</td>
+                    <td><div class="num-wrapper"><input type="number" class="p" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
+                </tr>
+                <tr data-day="4">
+                    <td class="day-label">木</td>
+                    <td><div class="num-wrapper"><input type="number" class="p" value="0" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
+                </tr>
+                <tr data-day="5">
+                    <td class="day-label">金</td>
+                    <td><div class="num-wrapper"><input type="number" class="p" value="0" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
+                </tr>
             </tbody>
         </table>
     </div>
 
     <div class="res-grid">
-        <div class="box profit"><span class="label" style="color:#eee;">期待できる一ヶ月あたりの利益額</span><span class="val" id="resProfit">0 円</span></div>
+        <div class="box profit"><span class="label" style="color:#eee;">一ヶ月の期待利益額</span><span class="val" id="resProfit">0 円</span></div>
         <div class="box" style="grid-column: 1 / -1;"><span class="label">最大保有ロット (ピーク時)</span><span class="val" id="peakLot">0.00 Lot</span></div>
         <div class="box" style="border-top: 2px solid var(--accent-blue);"><span class="label">海外必要資金</span><span class="val" id="resXM">0 円</span></div>
         <div class="box" style="border-top: 2px solid var(--danger);"><span class="label">国内必要資金</span><span class="val" id="resRakuten">0 円</span></div>
-        <div class="box"><span class="label">内バッファ</span><span class="val" id="resBuffer" style="color:#888;">0 円</span></div>
+        <div class="box"><span class="label">内バッファ (安全資金)</span><span class="val" id="resBuffer" style="color:#888;">0 円</span></div>
     </div>
-    <div class="footer-note">※土日はカウントせず3倍デーを自動加算。</div>
+    <div class="footer-note">※土日はカウントせず3倍デーを自動加算。最大露出は重複を含めたピーク時を採用。</div>
 </div>
 
 <script>
-    // スマホ用▲▼ボタンの関数
     function adj(btn, delta) {
-        const input = btn.parentElement.querySelector('input');
+        const input = btn.closest('.num-wrapper').querySelector('input');
         let val = parseFloat(input.value) + delta;
         const cls = input.className;
         if (cls === 'p') val = Math.max(0, Math.min(5, val));
@@ -143,7 +204,7 @@
             const data = await res.json();
             document.getElementById('rate').value = data.rates.JPY.toFixed(2);
         } catch (e) {}
-        calc(); // レート取得後に計算
+        calc();
     }
 
     function calc() {
@@ -156,15 +217,10 @@
 
         rows.forEach((row, index) => {
             const entryDay = index + 1;
-            const pInput = row.querySelector('.p');
-            const lInput = row.querySelector('.l');
-            const hInput = row.querySelector('.h');
-            if(!pInput || !lInput || !hInput) return;
-
-            const p = Math.min(5, parseFloat(pInput.value) || 0);
-            const l = Math.min(0.12, parseFloat(lInput.value) || 0);
-            const h = Math.min(7, parseInt(hInput.value) || 0);
-
+            const p = Math.min(5, parseFloat(row.querySelector('.p').value) || 0);
+            const l = Math.min(0.12, parseFloat(row.querySelector('.l').value) || 0);
+            const h = Math.min(7, parseInt(row.querySelector('.h').value) || 0);
+            
             let actualSwapDays = 0;
             if (h > 0) {
                 let currentDay = entryDay;
@@ -188,6 +244,7 @@
                 }
             }
         });
+
         const peakLot = Math.max(...timeline);
         const units = peakLot * 100000; const buffer = units * vol;
         document.getElementById('resProfit').innerText = Math.floor(weeklyProfit * 4).toLocaleString() + " 円";
@@ -196,7 +253,6 @@
         document.getElementById('resRakuten').innerText = Math.round((units * rate / 25) + buffer).toLocaleString() + " 円";
         document.getElementById('resBuffer').innerText = Math.round(buffer).toLocaleString() + " 円";
     }
-    // 起動時に確実に実行
     window.onload = fetchRate;
 </script>
 </body>
