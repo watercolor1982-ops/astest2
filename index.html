@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASシミュレーター V2 Pro | Stylish Dark</title>
+    <title>ASシミュレーター V2 Pro | Responsive Dark</title>
     <style>
         :root {
             --bg-deep: #1a1a1a;
@@ -18,58 +18,76 @@
         body { 
             font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
             background-color: var(--bg-deep); color: var(--text-main); 
-            padding: 20px; line-height: 1.5; font-size: 14px; margin: 0;
+            padding: 15px; line-height: 1.5; font-size: 14px; margin: 0;
         }
         .card { 
             max-width: 850px; margin: auto; background-color: var(--bg-card); 
-            padding: 30px; border-radius: 15px; 
+            padding: 20px; border-radius: 15px; 
             border: 1px solid var(--accent-gold);
             box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
         }
         h1 { 
             text-align: center; color: var(--accent-gold); 
-            font-size: 1.6em; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px;
+            font-size: 1.4em; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px;
         }
         .info-banner {
             background: rgba(212, 175, 55, 0.1);
             border-left: 4px solid var(--accent-gold);
-            padding: 12px; border-radius: 4px; margin-bottom: 25px; font-size: 0.85em; color: #ccc;
+            padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.8em; color: #ccc;
         }
+        
+        /* 入力エリアのグリッド */
         .setup-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 15px; margin-bottom: 25px; background: #111; padding: 20px; border-radius: 10px; border: 1px solid #222;
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* 基本2列 */
+            gap: 12px; margin-bottom: 20px; background: #111; padding: 15px; border-radius: 10px; border: 1px solid #222;
         }
+        @media (min-width: 600px) {
+            .setup-grid { grid-template-columns: repeat(4, 1fr); } /* PCでは4列 */
+        }
+        
         .group { display: flex; flex-direction: column; }
-        label { font-weight: bold; font-size: 0.8em; margin-bottom: 6px; color: var(--accent-gold); }
+        label { font-weight: bold; font-size: 0.75em; margin-bottom: 4px; color: var(--accent-gold); }
         input, select { 
             background: #222; border: 1px solid #444; border-radius: 6px; 
-            color: #fff; padding: 10px; font-size: 1em; outline: none; 
+            color: #fff; padding: 8px; font-size: 1em; outline: none; -webkit-appearance: none;
         }
         input:focus { border-color: var(--accent-gold); }
 
-        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-        th { background: #222; color: var(--accent-gold); font-size: 0.85em; padding: 12px 5px; border-bottom: 2px solid #333; }
-        td { padding: 12px 5px; text-align: center; border-bottom: 1px solid #1a1a1a; }
-        .day-label { font-weight: bold; color: var(--accent-gold); background: #0a0a0a; width: 60px; }
+        /* テーブルの横スクロール対応 */
+        .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; } /* スマホでも形を維持 */
+        th { background: #222; color: var(--accent-gold); font-size: 0.8em; padding: 10px 5px; border-bottom: 2px solid #333; }
+        td { padding: 10px 5px; text-align: center; border-bottom: 1px solid #1a1a1a; }
+        .day-label { font-weight: bold; color: var(--accent-gold); background: #0a0a0a; width: 45px; }
         td input { 
-            width: 70%; background: #111; border: 1px solid #333; 
+            width: 55px; background: #111; border: 1px solid #333; 
             color: #fff; padding: 6px; border-radius: 4px; text-align: center; 
         }
 
-        .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .box { padding: 18px; border-radius: 10px; text-align: center; background: #0a0a0a; border: 1px solid #333; }
+        /* 結果エリアのグリッド */
+        .res-grid { display: grid; grid-template-columns: 1fr; gap: 10px; } /* スマホは1列 */
+        @media (min-width: 600px) {
+            .res-grid { grid-template-columns: repeat(3, 1fr); } /* PCは3列 */
+        }
+        
+        .box { padding: 15px; border-radius: 10px; text-align: center; background: #0a0a0a; border: 1px solid #333; }
         .profit { 
             background: linear-gradient(145deg, #1e5631, #0a2012); 
-            grid-column: span 3; border: 1px solid var(--success); margin-bottom: 10px;
+            border: 1px solid var(--success); margin-bottom: 5px;
         }
+        @media (min-width: 600px) { .profit { grid-column: span 3; } }
+        
+        .peak-box { grid-column: 1 / -1; border-style: dashed; border-color: #444; }
+        
         .xm { border-top: 3px solid var(--accent-blue); }
         .rakuten { border-top: 3px solid var(--danger); }
-        .val { font-size: 1.5em; font-weight: bold; display: block; margin-top: 8px; }
+        .val { font-size: 1.4em; font-weight: bold; display: block; margin-top: 5px; }
         .label { font-size: 0.75em; color: #888; font-weight: bold; }
         
         #peakLot { color: var(--accent-gold); }
         .s-res { color: var(--accent-blue); font-weight: bold; }
-        .footer-note { font-size: 0.75em; color: #666; text-align: center; margin-top: 25px; line-height: 1.6; }
+        .footer-note { font-size: 0.7em; color: #666; text-align: center; margin-top: 20px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -95,62 +113,62 @@
             <input type="number" id="rate" value="160.0" step="0.1" oninput="calc()">
         </div>
         <div class="group">
-            <label>3倍デー設定</label>
+            <label>3倍デー</label>
             <select id="tripleDay" onchange="calc()">
-                <option value="1">月曜日</option>
-                <option value="2">火曜日</option>
                 <option value="3" selected>水曜日</option>
-                <option value="4">木曜日</option>
-                <option value="5">金曜日</option>
+                <option value="1">月曜日</option><option value="2">火曜日</option>
+                <option value="4">木曜日</option><option value="5">金曜日</option>
             </select>
         </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>曜日</th>
-                <th>回数 (最大5)</th>
-                <th>Lot (最大0.12)</th>
-                <th>保有日数 (最大7)</th>
-                <th>獲得スワップ</th>
-            </tr>
-        </thead>
-        <tbody id="daysTable">
-            <tr data-day="1"><td class="day-label">月</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
-            <tr data-day="2"><td class="day-label">火</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
-            <tr data-day="3"><td class="day-label">水</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
-            <tr data-day="4"><td class="day-label">木</td><td><input type="number" class="p" value="0" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
-            <tr data-day="5"><td class="day-label">金</td><td><input type="number" class="p" value="0" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
-        </tbody>
-    </table>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>曜日</th>
+                    <th>回数</th>
+                    <th>Lot</th>
+                    <th>保有</th>
+                    <th>獲得スワップ</th>
+                </tr>
+            </thead>
+            <tbody id="daysTable">
+                <tr data-day="1"><td class="day-label">月</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+                <tr data-day="2"><td class="day-label">火</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+                <tr data-day="3"><td class="day-label">水</td><td><input type="number" class="p" value="5" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+                <tr data-day="4"><td class="day-label">木</td><td><input type="number" class="p" value="0" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+                <tr data-day="5"><td class="day-label">金</td><td><input type="number" class="p" value="0" min="0" max="5"></td><td><input type="number" class="l" value="0.10" step="0.01" min="0" max="0.12"></td><td><input type="number" class="h" value="5" min="0" max="7"></td><td><span class="s-res">-</span>日分</td></tr>
+            </tbody>
+        </table>
+    </div>
 
     <div class="res-grid">
         <div class="box profit">
-            <span class="label" style="color:rgba(255,255,255,0.8);">期待できる一ヶ月あたりの利益額</span>
-            <span class="val" id="resProfit">0 円</span>
+            <span class="label" style="color:rgba(255,255,255,0.8);">一ヶ月の期待利益額</span>
+            <span class="val" id="resProfit" style="color:#fff;">0 円</span>
         </div>
-        <div class="box" style="grid-column: span 3; border-style: dashed; border-color: #444;">
+        <div class="box peak-box">
             <span class="label">最大保有ロット (ピーク時)</span>
             <span class="val" id="peakLot">0.00 Lot</span>
         </div>
         <div class="box xm">
-            <span class="label">海外 (1000倍) 必要資金</span>
+            <span class="label">海外必要資金</span>
             <span class="val" id="resXM">0 円</span>
         </div>
         <div class="box rakuten">
-            <span class="label">国内 (25倍) 必要資金</span>
+            <span class="label">国内必要資金</span>
             <span class="val" id="resRakuten">0 円</span>
         </div>
         <div class="box">
-            <span class="label">内バッファ (安全資金)</span>
+            <span class="label">内バッファ</span>
             <span class="val" id="resBuffer" style="color:#888;">0 円</span>
         </div>
     </div>
 
     <div class="footer-note">
-        ※土日は保有日数にカウントしません。3倍デーを跨ぐと自動で+2日加算されます。<br>
-        ※最大露出計算は、翌週のポジション重複分を含めた「瞬間最大ロット」を採用しています。
+        ※土日は保有日数にカウントしません。3倍デーを跨ぐと自動で+2日加算。<br>
+        ※最大露出は、翌週の重複を含めた「瞬間最大ロット」を採用。
     </div>
 </div>
 
@@ -189,10 +207,7 @@
                     currentDay++; if (currentDay > 5) currentDay = 1;
                 }
             }
-            
-            // 回数（p）が0の場合は獲得スワップ表示を0にする
             row.querySelector('.s-res').innerText = (p > 0) ? actualSwapDays : 0;
-            
             weeklyProfit += p * (l / 0.1) * swap01 * actualSwapDays;
 
             for(let week=0; week<2; week++) {
