@@ -32,9 +32,10 @@
         }
 
         .info-banner {
-            background: rgba(212, 175, 55, 0.05); border-left: 3px solid var(--accent-gold);
-            padding: 10px; border-radius: 4px; margin-bottom: 25px; font-size: 0.8em; color: #888;
+            background: rgba(255, 255, 255, 0.03); border-left: 4px solid var(--accent-gold);
+            padding: 12px; border-radius: 4px; margin-bottom: 25px; font-size: 0.85em; color: #888;
         }
+        .info-banner strong { color: #ffffff; font-weight: bold; }
 
         /* 設定エリア */
         .setup-grid { 
@@ -58,7 +59,7 @@
         td { padding: 10px 2px; border-bottom: 1px solid #111; text-align: center; vertical-align: middle; }
         .day-label { font-weight: bold; color: var(--accent-gold); font-size: 1.1em; }
 
-        /* ▲▼ボタン付き入力欄（常時表示・縦積み） */
+        /* ▲▼ボタン付き入力欄 */
         .num-wrapper { display: inline-flex; align-items: center; gap: 4px; background: var(--input-bg); border: 1px solid #333; border-radius: 4px; padding-right: 2px; }
         .num-wrapper input { border: none; background: transparent; width: 50px; padding: 6px 2px; font-size: 1em; }
         
@@ -70,7 +71,7 @@
         }
         .m-btn:active { background: #444; }
 
-        /* スマホ用（画面幅600px以下）の微調整 */
+        /* スマホ用微調整 */
         @media (max-width: 600px) {
             .card { padding: 15px 10px; border: 1px solid var(--accent-gold); }
             th { font-size: 0.65em; }
@@ -97,7 +98,12 @@
         
         #peakLot { color: var(--accent-gold); }
         .s-res { color: var(--accent-blue); font-weight: bold; }
-        .footer-note { font-size: 0.7em; color: #444; text-align: center; margin-top: 20px; line-height: 1.5; }
+
+        /* 備考欄（白文字・標準ウェイト） */
+        .footer-note { 
+            font-size: 0.75em; color: #ffffff; text-align: left; 
+            margin-top: 25px; line-height: 1.6; font-weight: normal;
+        }
         
         /* スピンボタン消去 */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -110,7 +116,7 @@
     <h1>ASシミュレーター V2 Pro</h1>
 
     <div class="info-banner">
-        ※1日最大5ポジション、1回最大0.12Lot、最大保有7日間の公式ルールに準拠。
+        ※<strong>標準運用モデル（月～水新規エントリー、保有設定：月5・火4・水3、金曜夜に一括決済）</strong>の公式ルールに基づいています。
     </div>
 
     <div class="setup-grid">
@@ -148,28 +154,28 @@
                     <td class="day-label">火</td>
                     <td><div class="num-wrapper"><input type="number" class="p" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
-                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="4" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
                 </tr>
                 <tr data-day="3">
                     <td class="day-label">水</td>
                     <td><div class="num-wrapper"><input type="number" class="p" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
-                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="3" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
                 </tr>
                 <tr data-day="4">
                     <td class="day-label">木</td>
                     <td><div class="num-wrapper"><input type="number" class="p" value="0" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
-                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="0" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
                 </tr>
                 <tr data-day="5">
                     <td class="day-label">金</td>
                     <td><div class="num-wrapper"><input type="number" class="p" value="0" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td><div class="num-wrapper"><input type="number" class="l" value="0.10" step="0.01" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,0.01)">▲</button><button class="m-btn" onclick="adj(this,-0.01)">▼</button></div></div></td>
-                    <td><div class="num-wrapper"><input type="number" class="h" value="5" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
+                    <td><div class="num-wrapper"><input type="number" class="h" value="0" oninput="calc()"><div class="btn-stack"><button class="m-btn" onclick="adj(this,1)">▲</button><button class="m-btn" onclick="adj(this,-1)">▼</button></div></div></td>
                     <td class="s-res-wrap"><span class="s-res">-</span>日分</td>
                 </tr>
             </tbody>
@@ -183,7 +189,11 @@
         <div class="box" style="border-top: 2px solid var(--danger);"><span class="label">国内口座（レバレッジ25倍）必要資金</span><span class="val" id="resRakuten">0 円</span></div>
         <div class="box"><span class="label">内バッファ (安全資金)</span><span class="val" id="resBuffer" style="color:#888;">0 円</span></div>
     </div>
-    <div class="footer-note">※土日はカウントせず3倍デーを自動加算。最大露出は重複を含めたピーク時を採用。</div>
+    
+    <div class="footer-note">
+        ※本シミュレーションはスワップ益のみを算出した理論値です。実際には決済時のスプレッドや、ダミートレードによる損益差分等により、算出額を下回ります。<br>
+        ※実際の運用結果を保証するものではありません。
+    </div>
 </div>
 
 <script>
